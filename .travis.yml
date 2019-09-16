@@ -17,7 +17,6 @@ install:
   - go get -u github.com/Microkubes/microservice-tools
   - go get -u github.com/guregu/dynamo
   - go get -u github.com/satori/go.uuid
-  - go get -u github.com/goadesign/goa
   - go get -u github.com/aws/aws-sdk-go/aws
   - go get -u gopkg.in/mgo.v2
 
