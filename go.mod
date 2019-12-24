@@ -3,7 +3,7 @@ module github.com/Microkubes/backends
 go 1.13
 
 require (
-	github.com/Microkubes/microservice-tools v1.0.1
+	github.com/Microkubes/microservice-tools v1.1.0
 	github.com/aws/aws-sdk-go v1.26.6
 	github.com/guregu/dynamo v1.5.0
 	github.com/kr/pretty v0.1.0 // indirect
