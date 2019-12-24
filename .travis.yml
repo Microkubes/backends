@@ -1,24 +1,28 @@
 env:
   global:
     - CC_TEST_REPORTER_ID=${CODE_CLIMATE_REPORTER_ID}
+    - GO_ENABLED=0
+    - GO111MODULE=on
+    - GOOS=linux
+    - GOARCH=amd64
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
 
 language: go
 
 go:
-  - 1.8.x
+  - 1.13.x
 
 before_install:
   - go get github.com/axw/gocov/gocov
   - go get github.com/AlekSi/gocov-xml
 
-install:
-  - go get -u gopkg.in/h2non/gock.v1
-  - go get -u github.com/Microkubes/microservice-tools
-  - go get -u github.com/guregu/dynamo
-  - go get -u github.com/satori/go.uuid
-  - go get -u github.com/aws/aws-sdk-go/aws
-  - go get -u gopkg.in/mgo.v2
+# install:
+#   - go get -u gopkg.in/h2non/gock.v1
+#   - go get -u github.com/Microkubes/microservice-tools
+#   - go get -u github.com/guregu/dynamo
+#   - go get -u github.com/satori/go.uuid
+#   - go get -u github.com/aws/aws-sdk-go/aws
+#   - go get -u gopkg.in/mgo.v2
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
