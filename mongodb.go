@@ -218,8 +218,17 @@ func (s *MongoSession) GetAll(filter Filter, resultsTypeHint interface{}, order 
 	slicePointer.Elem().Set(results)
 
 	if !s.repoDef.IsCustomID() {
-		if err := stringToObjectID(filter); err != nil {
-			return nil, ErrInvalidInput(err)
+		if id, ok := filter["id"]; ok {
+			// check if id field contains values separated by comma
+			if ok := strings.Contains(id.(string), ","); ok {
+				if err := sliceToObjectID(filter); err != nil {
+					return nil, ErrInvalidInput(err)
+				}
+			} else {
+				if err := stringToObjectID(filter); err != nil {
+					return nil, ErrInvalidInput(err)
+				}
+			}
 		}
 	}
 
@@ -416,6 +425,24 @@ func toMongoFilter(filter Filter) (map[string]interface{}, error) {
 				continue
 			}
 			return nil, fmt.Errorf("unknown filter specification - supported type is $pattern")
+		}
+		// if filter key contains multiple values to search by
+		if val, ok := value.(string); ok {
+			if values := strings.Split(val, ","); len(values) > 1 {
+				mgf[key] = bson.M{
+					"$in": values,
+				}
+				continue
+			}
+		}
+		// if filter _id contains multiple id to search by
+		if val, ok := value.([]bson.ObjectId); ok {
+			if len(val) > 1 {
+				mgf[key] = bson.M{
+					"$in": val,
+				}
+				continue
+			}
 		}
 		mgf[key] = value // copy over the key=>value pairs to do exact matching
 	}

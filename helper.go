@@ -111,6 +111,27 @@ func stringToObjectID(object map[string]interface{}) error {
 	return nil
 }
 
+// sliceToObjectID converts _id key from slice of strings to slice of bson.ObjectId
+func sliceToObjectID(object map[string]interface{}) error {
+	if id, ok := object["id"]; ok {
+		delete(object, "id")
+		ids := strings.Split(id.(string), ",")
+		bsonIds := []bson.ObjectId{}
+		for _, id := range ids {
+			if !bson.IsObjectIdHex(id) {
+				return ErrInvalidInput("id is a invalid hex representation of an ObjectId")
+			}
+
+			if reflect.TypeOf(id).String() != "bson.ObjectId" {
+				bsonIds = append(bsonIds, bson.ObjectIdHex(id))
+			}
+		}
+		object["_id"] = bsonIds
+	}
+
+	return nil
+}
+
 // IsConditionalCheckErr check if err is dynamoDB condition error
 func IsConditionalCheckErr(err error) bool {
 	if ae, ok := err.(awserr.RequestFailure); ok {
